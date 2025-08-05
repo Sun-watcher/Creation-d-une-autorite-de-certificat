@@ -1,0 +1,27 @@
+--------------------------------------- CREATION -----------------------------------------
+
+# Transformer le fichier texte en hash sha512 binaire
+
+### NE PAS OUBLIER D'ENCODER LE FICHIER CONCATENATION EN BYTES (concatenation.txt.encode() ) AVANT DE LE PASSER EN SHA512 ###
+
+openssl dgst -sha512 -binary -out concatenation_hash_sha512.bin concatenation.txt
+
+# Créer un fichier tsq en utilisant sha512
+
+openssl ts -query -data concatenation_hash_sha512.bin -no_nonce -sha512 -cert -out concatenation.tsq
+
+# Envoyer la requête de timestamping au serveur de timestamping
+
+curl -H "Content-Type: application/timestamp-query" --data-binary @concatenation.tsq https://freetsa.org/tsr -o concatenation.tsr
+
+------------------------------------- VERIFICATION ---------------------------------------
+
+# Commande pour afficher les infos de l'horodatage (entre autres, la date de l'horodatage et le hash du fichier d'origine)
+
+openssl ts -reply -in concatenation.tsr -text
+
+# Commande pour vérifier le timestamp (on utilise les certificats de l'autorité d'horodatage disponible sur le site de freetsa.org)
+
+openssl ts -verify -in concatenation.tsr -queryfile concatenation.tsq -CAfile Timestamp/freetsa_certs/cacert.pem -untrusted Timestamp/freetsa_certs/tsa.crt
+
+

@@ -1,0 +1,40 @@
+[ req ]
+default_bits        = 4096
+default_keyfile     = ca.key
+distinguished_name  = req_distinguished_name
+x509_extensions     = v3_ca       # Si vous voulez un certificat de CA, utilisez v3_ca
+string_mask         = nombstr
+req_extensions      = v3_req      # Si vous créez une demande pour un serveur, utilisez v3_req
+
+[ req_distinguished_name ]
+countryName         = FR
+countryName_default = FR
+stateOrProvinceName = Nouvelle-Aquitaine
+stateOrProvinceName_default = Nouvelle-Aquitaine
+localityName        = Limoges
+localityName_default = Limoges
+organizationName    = Cryptis
+organizationName_default = Cryptis
+organizationalUnitName = Dev
+organizationalUnitName_default = Dev
+commonName          = localhost
+commonName_default  = localhost
+emailAddress        = admin@localhost
+emailAddress_default = admin@localhost
+
+
+[ v3_req ]  # Extensions pour une demande de certificat (CSR)
+basicConstraints   = CA:FALSE
+keyUsage           = digitalSignature, keyEncipherment
+extendedKeyUsage   = serverAuth
+subjectAltName     = @alt_names
+
+[ alt_names ]
+DNS.1 = localhost
+IP.1 = 127.0.0.1
+IP.2 = 0.0.0.0
+
+[ v3_ca ]  # Extensions pour un certificat d'autorité de certification (CA)
+basicConstraints   = critical, CA:TRUE, pathlen:0  # C'est une CA, donc CA:TRUE
+keyUsage           = cRLSign, keyCertSign
+subjectAltName     = @alt_names  # Vous pouvez également spécifier un SAN (Subject Alternative Name) pour la CA
